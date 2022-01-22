@@ -5,13 +5,23 @@ use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductImagesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ProductTagsController;
+use App\Http\Controllers\User\LoginController;
+use App\Http\Controllers\User\RegisterController;
+use App\Http\Controllers\User\UsersController;
 use App\Http\Controllers\VariantItemsController;
 use App\Http\Controllers\VariantsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'users'], function() {
+    // Route::get('/', [UsersController::class, 'user']);
+    Route::group(['middleware' => ['auth:sanctum']], function() {
+        Route::get('/', [UsersController::class, 'user']);
+        Route::post('/logout', [LoginController::class, 'logout']);
+        Route::put('/', [UsersController::class, 'update']);
+    });
+    Route::post('/register',[RegisterController::class, 'register']);
+    Route::post('/login', [LoginController::class, 'login']);
 });
 
 Route::group(['prefix' => 'products'], function() {
