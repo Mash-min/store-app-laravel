@@ -30,4 +30,9 @@ class VariantItem extends Model
     {
         return $this->belongsTo(Variant::class, 'variant_id');
     }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'variant_item_id');
+    }
 }

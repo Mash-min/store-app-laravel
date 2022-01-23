@@ -44,4 +44,24 @@ class User extends Authenticatable
             $user->slug = 'user-'.rand().time();
         });
     }
+
+    public function savedProducts()
+    {
+        return $this->hasMany(SavedProduct::class, 'user_id');
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'user_id');
+    }
+
+    public function productAlreadySaved($productId)
+    {
+        return $this->savedProducts()->where(['product_id' => $productId])->exists();
+    }
+
+    public function productAlreadyInCart($productId)
+    {
+        return $this->carts()->where(['product_id' => $productId])->exists();
+    }
 }

@@ -55,4 +55,9 @@ class Product extends Model
         return $this->hasMany(Variant::class, 'product_id');
     }
 
+    public function saves()
+    {
+        return $this->hasMany(SavedProduct::class, 'product_id');
+    }
+
 }

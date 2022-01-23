@@ -1,20 +1,20 @@
 <?php
 
+use App\Http\Controllers\CartsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductImagesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ProductTagsController;
+use App\Http\Controllers\SavedProductsController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use App\Http\Controllers\User\UsersController;
 use App\Http\Controllers\VariantItemsController;
 use App\Http\Controllers\VariantsController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'users'], function() {
-    // Route::get('/', [UsersController::class, 'user']);
     Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::get('/', [UsersController::class, 'user']);
         Route::post('/logout', [LoginController::class, 'logout']);
@@ -62,4 +62,21 @@ Route::group(['prefix' => 'categories'], function() {
     Route::get('/{id}', [CategoriesController::class, 'find']);
     Route::put('/{id}', [CategoriesController::class, 'update']);
     Route::delete('/{id}', [CategoriesController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'saved-products'], function() {
+    Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::post('/', [SavedProductsController::class, 'create']);
+        Route::delete('/{id}', [SavedProductsController::class, 'delete']);
+    });
+});
+
+Route::group(['prefix' => 'carts'], function() {
+    Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::get('/', [CartsController::class, 'carts']);
+        Route::get('/{id}', [CartsController::class, 'find']);
+        Route::delete('/{id}', [CartsController::class, 'delete']);
+        Route::post('/', [CartsController::class, 'create']);
+        Route::post('/variants', [CartsController::class, 'variants']);
+    });
 });
