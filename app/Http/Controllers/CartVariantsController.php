@@ -12,7 +12,7 @@ class CartVariantsController extends Controller
         foreach($request->variant_item_id as $variant)
         {
             CartVariant::create($request->all() + [
-                'variant_item_is' => $variant
+                'variant_item_id' => $variant
             ]);
         }
     }

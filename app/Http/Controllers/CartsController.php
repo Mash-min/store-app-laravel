@@ -11,10 +11,10 @@ class CartsController extends Controller
     public function create(Request $request)
     {
         if(!$request->user()->productAlreadyInCart($request->product_id)) {
-            $cart = Cart::create($request->all());
+            $cart = $request->user()->carts()->create($request->all());
             return response()->json(['cart' => $cart]);
         } else {
-            return response()->json(['message' => 'Product already in cart']);
+            return response()->json(['message' => 'Product already in cart'], 422);
         }
     }
 
@@ -39,6 +39,7 @@ class CartsController extends Controller
     {
         $carts = $request->user()->carts()
                                  ->orderBy('created_at', 'DESC')
+                                 ->with('product')
                                  ->with('variants.variantItem')
                                  ->paginate(8);
         return response()->json(['carts' => $carts]);
