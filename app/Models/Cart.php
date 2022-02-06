@@ -18,7 +18,7 @@ class Cart extends Model
     ];
 
     protected $attributes = [
-        'status' => 'active'
+        'status' => 'on-cart'
     ];
 
     protected static function boot()
@@ -42,5 +42,10 @@ class Cart extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'cart_id');
     }
 }

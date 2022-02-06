@@ -29,9 +29,13 @@ class CartsController extends Controller
         }
     }
 
-    public function find($id)
+    public function find($slug)
     {
-        $cart = Cart::with('variants.variantItem')->findOrFail($id);
+        // $cart = Cart::with('variants.item')->findOrFail($id);
+        $cart = Cart::where(['slug' => $slug])
+                    ->with('variants.item')
+                    ->with('product.images')
+                    ->first();
         return response()->json(['cart' => $cart]);
     }
 
@@ -39,8 +43,9 @@ class CartsController extends Controller
     {
         $carts = $request->user()->carts()
                                  ->orderBy('created_at', 'DESC')
-                                 ->with('product')
-                                 ->with('variants.variantItem')
+                                 ->where('status', 'on-cart')
+                                 ->with('product.images')
+                                 ->with('variants.item')
                                  ->paginate(8);
         return response()->json(['carts' => $carts]);
     }
@@ -49,5 +54,18 @@ class CartsController extends Controller
     {
         Cart::findOrFail($id)->delete();
         return response()->json(['message' => 'Product removed to cart']);
+    }
+
+    public function findCarts(Request $request) 
+    {
+        $cartArr = collect([]);
+        foreach($request->slugs as $slug)
+        {
+            $cart = Cart::where('slug', $slug)->with('product.images')
+                                              ->with('variants.item')                                  
+                                              ->first();
+            $cartArr->push($cart);
+        }
+        return $cartArr;
     }
 }

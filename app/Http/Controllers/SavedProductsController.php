@@ -10,8 +10,8 @@ class SavedProductsController extends Controller
     public function create(Request $request)
     {
         if(!$request->user()->productAlreadySaved($request->product_id)) {      
-            $savedProduct = SavedProduct::create($request->all());
-            return response()->json(['saved-product' => $savedProduct]);
+            $savedProduct = $request->user()->savedProducts()->create($request->all());
+            return response()->json(['message' => 'Product saved', 'saved-product' => $savedProduct]);
         } else {
             return response()->json(['message' => "Product already saved"]);
         }
@@ -21,5 +21,14 @@ class SavedProductsController extends Controller
     {
         SavedProduct::findOrFail($id)->delete();
         return response()->json(['message' => 'Product removed']);
+    }
+
+    public function savedProducts(Request $request)
+    {
+        $savedProducts = $request->user()->savedProducts()
+                                 ->orderBy('created_at', 'DESC')
+                                 ->with('product.images')
+                                 ->paginate(12);
+        return response()->json(['products' => $savedProducts]);
     }
 }

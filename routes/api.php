@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductCategoriesController;
 use App\Http\Controllers\ProductImagesController;
 use App\Http\Controllers\ProductsController;
@@ -19,6 +20,8 @@ Route::group(['prefix' => 'users'], function() {
         Route::get('/', [UsersController::class, 'user']);
         Route::post('/logout', [LoginController::class, 'logout']);
         Route::put('/', [UsersController::class, 'update']);
+        Route::put('/reset-password', [UsersController::class, 'resetPassword']);
+        Route::get('/dashboard', [UsersController::class, 'dashboard']);
     });
     Route::post('/register',[RegisterController::class, 'register']);
     Route::post('/login', [LoginController::class, 'login']);
@@ -32,6 +35,7 @@ Route::group(['prefix' => 'products'], function() {
     Route::get('/paginate/{limit}', [ProductsController::class, 'products']);
     Route::put('/archive-product/{id}', [ProductsController::class, 'archive']);
     Route::put('/restore-product/{id}', [ProductsController::class, 'restore']);
+    Route::get('/search/{product}', [ProductsController::class, 'search']);
 });
 
 Route::group(['prefix' => 'product-images'], function() {
@@ -66,6 +70,7 @@ Route::group(['prefix' => 'categories'], function() {
 
 Route::group(['prefix' => 'saved-products'], function() {
     Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::get('/', [SavedProductsController::class, 'savedProducts']);
         Route::post('/', [SavedProductsController::class, 'create']);
         Route::delete('/{id}', [SavedProductsController::class, 'delete']);
     });
@@ -78,5 +83,17 @@ Route::group(['prefix' => 'carts'], function() {
         Route::delete('/{id}', [CartsController::class, 'delete']);
         Route::post('/', [CartsController::class, 'create']);
         Route::post('/variants', [CartsController::class, 'variants']);
+        Route::post('/find-carts', [CartsController::class, 'findCarts']);
+    });
+});
+
+Route::group(['prefix' => 'orders'], function() {
+    Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::post('/', [OrdersController::class, 'create']);
+        Route::get('/all-orders/{status}', [OrdersController::class, 'allOrders']);
+        Route::get('/status/{status}', [OrdersController::class, 'orders']);
+        Route::delete('/{id}', [OrdersController::class, 'delete']);
+        Route::put('/{id}', [OrdersController::class, 'update']);
+        Route::get('/search/{data}', [OrdersController::class, 'search']);
     });
 });

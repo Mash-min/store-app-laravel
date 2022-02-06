@@ -24,7 +24,8 @@ class User extends Authenticatable
     ];
 
     protected $attributes = [
-        'role' => 'user'
+        'role' => 'user',
+        'address' => '---'
     ];
 
     protected $hidden = [
@@ -62,6 +63,13 @@ class User extends Authenticatable
 
     public function productAlreadyInCart($productId)
     {
-        return $this->carts()->where(['product_id' => $productId])->exists();
+        return $this->carts()->where(['product_id' => $productId])
+                             ->where(['status' => 'on-cart'])
+                             ->exists();
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
     }
 }

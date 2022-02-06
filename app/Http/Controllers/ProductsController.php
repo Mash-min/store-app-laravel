@@ -27,7 +27,7 @@ class ProductsController extends Controller
                           ->with('tags')
                           ->with('variants.items')
                           ->where(['slug' => $slug])
-                          ->first();
+                          ->firstOrFail();
         return response()->json(['product' => $product]);
     }
 
@@ -42,6 +42,7 @@ class ProductsController extends Controller
     {
         $products = Product::with('images')
                            ->with('categories')
+                           ->with('variants.items')
                            ->orderBy('created_at', 'DESC')
                            ->paginate($limit);
         return response()->json(['products' => $products]);
@@ -59,5 +60,17 @@ class ProductsController extends Controller
         $product = Product::findOrFail($id);
         $product->update(['status' => 'active']);
         return response()->json(['product' => $product]);
+    }
+
+    public function search($product) 
+    {
+        $products = Product::where('name', 'like', '%'.$product.'%')
+                         ->orWhere('slug', $product)
+                         ->orWhere('price', $product)
+                         ->with('images')
+                         ->with('categories')
+                         ->with('variants.items')
+                         ->paginate(12);
+        return response()->json(['products' => $products]);
     }
 }
