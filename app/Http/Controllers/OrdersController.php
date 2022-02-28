@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Cart;
-use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
